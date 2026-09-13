@@ -1,0 +1,425 @@
+# YouTuber clone pipeline configuration.
+
+# Loaded by pipeline.config.Settings (pydantic-settings) at the start of each stage.
+
+# Override any value via env var with prefix YOUTUBER_, e.g. YOUTUBER_PATHS__DATA_DIR=...
+
+
+
+paths:
+
+  data_dir: data
+
+  audio_dir: data/audio
+
+  meta_dir: data/meta
+
+  vad_dir: data/vad
+
+  diarize_dir: data/diarize
+
+  identify_dir: data/identify
+
+  transcribe_dir: data/transcribe
+
+  filter_dir: data/filter
+
+  clean_dir: data/clean
+
+  dataset_dir: data/dataset
+
+  reference_clip: data/reference/speaker_reference.wav
+
+  review_dir: data/review
+
+  decisions_db: data/decisions.sqlite
+
+  logs_dir: logs
+
+
+
+# Stage 1 — yt-dlp
+
+download:
+
+  # Channel URL or a list of video URLs. Provide one or the other.
+
+  channel_url: ""  # Set your permitted channel URL or fill video_urls below.
+
+  video_urls: []
+
+  audio_format: wav
+
+  audio_quality: "0"          # best
+
+  sample_rate_hz: 16000
+
+  channels: 1                  # mono
+
+  # Ceiling on how many videos to enumerate from the channel (newest-first). There is no "all"
+
+  # sentinel, so this is set well above the channel's total to pull the ENTIRE channel toward the
+
+  # full corpus. The pipeline is idempotent: run_corpus drains only videos lacking a filter output,
+
+  # so re-run the notebook's drain cell (cell09) across sessions until the manifest is fully done.
+
+  # (Was 60 for the pilot; bumped for the full run on 2026-06-18.)
+
+  max_videos: 2000
+
+  # Anti-bot-gate throttling for the full-corpus drain on Colab's datacenter IP (2026-06-19):
+
+  # randomized 10-30s pause before each download so the burst pattern looks less scraper-like.
+
+  # Pair with: restart the Colab runtime (fresh IP) + run_corpus --limit N per session.
+
+  sleep_interval_s: 10
+
+  max_sleep_interval_s: 30
+
+
+
+# Stage 2 — Silero VAD
+
+vad:
+
+  threshold: 0.5               # speech probability; tune on calibration set
+
+  min_speech_ms: 250
+
+  min_silence_ms: 100
+
+  speech_pad_ms: 30
+
+
+
+# Stage 3 — speaker segmentation
+
+diarize:
+
+  # "segmentation" = clustering-free (GPU only, no CPU bottleneck); "diarization" = full
+
+  # pyannote with CPU clustering (fallback / A-B baseline). Downstream only uses segment
+
+  # (start,end) + Stage-4 ECAPA similarity, so cluster labels are unused — see escape note.
+
+  # To A/B or fall back without editing: YOUTUBER_DIARIZE__METHOD=diarization
+
+  method: segmentation
+
+  model: pyannote/speaker-diarization-3.1     # used only when method=diarization
+
+  segmentation_model: pyannote/segmentation-3.0   # used only when method=segmentation
+
+  # Leave null to let pyannote infer (method=diarization only)
+
+  num_speakers: null
+
+  min_speakers: null
+
+  max_speakers: null
+
+  # GPU batch sizes — bigger = faster on the GPU phases (lower if VRAM OOMs). 256 suits A100 40GB.
+
+  segmentation_batch_size: 256
+
+  embedding_batch_size: 256
+
+  # Segmentation-only post-processing (method=segmentation):
+
+  seg_min_duration_on: 0.0      # keep all detected speech; Stage 4 drops <0.5s as too_short
+
+  seg_min_duration_off: 0.25    # bridge <0.25s gaps (breaths) so his speech isn't fragmented;
+
+                                # real turn-pauses still split the segment -> limits contamination
+
+  seg_max_segment_s: 28.0       # split longer regions (under filter.max_segment_s=30 so long
+
+                                # monologue survives instead of being dropped as bad_length)
+
+
+
+# Stage 4 — speaker identification (the critical stage)
+
+identify:
+
+  embedding_model: speechbrain/spkrec-ecapa-voxceleb   # ECAPA-TDNN
+
+  similarity_threshold: 0.50   # lowered from 0.55 (his own speaker avg ~0.52; non-him cluster sits 0.0-0.4)
+
+  # Borderline window — flagged for human review even if above threshold
+
+  borderline_low: 0.40         # = non-him ceiling; 0.40-0.50 -> human review
+
+  borderline_high: 0.70
+
+  # Sliding-window sub-segmentation — excises guest spans inside speaker-mixed segments that
+
+  # the clustering-free Stage 3 produces (a mixed segment's whole-clip embedding is dominated
+
+  # by him and wrongly passes; per-window gating drops the guest's ~0.3 windows instead).
+
+  window_s: 1.5
+
+  hop_s: 0.75
+
+  win_keep_threshold: null     # per-window gate; null -> use similarity_threshold (0.50)
+
+  bridge_max_dip_windows: 1    # bridge a single transition window flanked by keeps
+
+  min_keep_span_s: 2.0         # drop spans under the 2.0s transcribe/filter floor
+
+
+
+# Stage 5 — WhisperX
+
+transcribe:
+
+  model: large-v3
+
+  language: "tr"               # subject speaks Turkish; force to avoid language-switch hallucinations
+
+  compute_type: float16        # T4/A100. CPU fallback: int8
+
+  batch_size: 8
+
+  word_timestamps: true
+
+
+
+# Stage 6 — quality filtering
+
+filter:
+
+  min_avg_logprob: -1.0        # tighten on calibration
+
+  min_segment_s: 2.0           # LLM use; TTS uses tts.min_segment_s below
+
+  max_segment_s: 30.0
+
+  max_words_per_second: 6.0    # sanity check vs Whisper hallucinations
+
+  # Regex patterns to drop the WHOLE segment. Add Whisper hallucinations seen during calibration.
+
+  drop_patterns:
+
+    - "(?i)thank(s)? for watching"
+
+    - "(?i)subscribe to"
+
+    - "(?i)like and subscribe"
+
+    - "(?i)\\bcopyright\\b.{0,40}\\b(youtube|all rights)\\b"
+
+  # In-place artifact SCRUB (strip the match, keep surrounding speech). Validated zero-false-
+
+  # positive over the corpus by the Stage-7 review (only subtitle credits + thanks-for-watching;
+
+  # NOT broad keywords — he really says "teşekkür"/"müzik"). Applied per-segment before stitching.
+
+  scrub_patterns:
+
+    - 'Altyaz[ıi]\s+M\.?\s*K\.?'                                # "Altyazı M.K." (often spliced mid-sentence)
+
+    - 'Altyaz[ıi]\s+ekleyen[^.\n]*\.?'                          # subtitle-credit STEM (catches "...için teşekkürler"
+
+                                                                 # AND "...ve çizgi film müziği" sibling; precision-
+
+                                                                 # verified: corpus has zero non-artifact "Altyazı")
+
+    - '^\s*İzledi[ğg]iniz i[çc]in te[şs]ekk[üu]r ederim\.?\s*$' # "thanks for watching" (full-line anchored)
+
+
+
+# Stage 6.5 — text-level contamination cleaning (data/filter -> data/clean). No re-transcribe.
+
+# Removes read-aloud third-party prose (datelines/newswire) that speaker-ID kept (his voice)
+
+# but isn't his style. PROFANITY IS NEVER DROPPED — drop_patterns are structural only.
+
+clean:
+
+  # Whole-segment structural DROP regexes. EMPTY until validated zero-false-positive on the
+
+  # corpus (his real speech contains dates/quotes too) — candidates are checked with
+
+  # scripts/validate_clean_patterns.py before being added here.
+
+  drop_patterns: []
+
+  # Verified ASR corrections {wrong: right}; each 'wrong' confirmed never legitimate. Never profanity.
+
+  # Vetted zero-false-positive via scripts.validate_clean_patterns over the full 495-video corpus.
+
+  # 2026-06-23 audit: corpus ASR (large-v3) is high quality (median seg avg_logprob -0.165, worst
+
+  # video -0.293); the only SYSTEMATIC globally-replaceable error is duaylı->duayen ("doyen";
+
+  # 2 occ, both errors, never a real Turkish word). Foreign/EN-DE one-off mistranscriptions exist
+
+  # but are non-systematic (each wrong string occurs once) so they are NOT bulk-correctable here.
+
+  corrections:
+
+    "duaylı": "duayen"
+
+  # Lowercased Turkish title keywords flagging interview/panel/co-host videos for the (later)
+
+  # LLM-scoped guest-removal pass. Tune against actual channel titles.
+
+  title_flags:
+
+    - "röportaj"      # interview
+
+    - "söyleşi"       # talk / interview
+
+    - "panel"
+
+    - "tartışma"      # debate
+
+    - "konuk"         # guest
+
+  max_drop_ratio_flag: 0.5     # flag a video whose structural drop ratio exceeds this
+
+  emit_review: true            # write data/clean/{vid}.review.json (dropped spans + reasons)
+
+
+
+# Stage 7 — Claude review batching
+
+review:
+
+  batch_size: 75               # 50–100 per CLAUDE.md
+
+  context_neighbors: 2         # surrounding segments on each side
+
+
+
+# Stage 9 — dataset assembly
+
+assemble:
+
+  llm_skip_marker: "[SKIP]"
+
+  skip_gap_s: 1.0             # gap (s) between kept segments that triggers a [SKIP] marker
+
+  rag_chunk_tokens: 500
+
+  rag_chunk_overlap_tokens: 50
+
+
+
+# TTS-specific filtering for Stage 9 TTS subset
+
+tts:
+
+  min_segment_s: 3.0
+
+  max_segment_s: 15.0
+
+
+
+# Phase 4 — RAG (retrieval-augmented grounded answers). Style is in the QLoRA weights;
+
+# substance comes from hybrid retrieval over his own transcript corpus.
+
+rag:
+
+  source: clean                     # which segment-JSON dir: clean | filter
+
+  embedder: BAAI/bge-m3
+
+  reranker: BAAI/bge-reranker-v2-m3
+
+  store_path: data/rag/qdrant       # local on-disk Qdrant (no server)
+
+  collection: speaker_clean           # 2026-07-01: default flipped speaker -> speaker_clean (T1 his-only,
+
+                                    # 3551 chunks). The contaminated `speaker` (7402) is kept for A/B —
+
+                                    # reach it via `--collection speaker` on the CLIs.
+
+  # Production evidence orchestration. The legacy collection/threshold fields below remain only
+
+  # for low-level evaluation tools and never authorize an answer.
+
+  evidence_collection: speaker_clean
+
+  retrieval_mode: clean_with_card_hints
+
+  card_collection: speaker_cards
+
+  card_catalog_path: data/cards/speaker_cards.json
+
+  card_manifest_path: data/cards/speaker_cards.index_manifest.json
+
+  card_hint_top_n: 2
+
+  card_hint_min_score: -1.0
+
+  original_candidate_n: 8
+
+  hint_candidate_n: 2
+
+  verifier_candidate_max: 12
+
+  verifier_span_char_cap: 1800
+
+  verifier_span_seconds_cap: 180.0
+
+  answer_span_max: 5
+
+  answer_span_char_cap: 1800
+
+  answer_context_char_cap: 9000
+
+  verifier_model: qwen3:4b
+
+  verifier_temperature: 0.0
+
+  verifier_seed: 42
+
+  verifier_num_ctx: 8192
+
+  verifier_num_predict: 1200
+
+  verifier_timeout_s: 120
+
+  chunk_tokens: 500
+
+  chunk_overlap: 50
+
+  retrieve_top_k: 20                # hybrid candidates before rerank
+
+  rerank_top_n: 3                   # chunks kept after rerank
+
+  max_per_video: 2                  # source-diversity cap on reranked hits (0 = off). Without it one
+
+                                    # video can supply every top hit (seen: 6/6 on "mutlak butlan").
+
+  gate_threshold: 0.0               # 2026-06-29: lowered 1.0->0.0 for the CLEAN index (speaker_clean). The 1.0
+
+                                    # was tuned on the contaminated `speaker` (where 1.0 filtered guest spans).
+
+                                    # In speaker_clean every chunk is HIS, so a low gate is safe; his historical
+
+                                    # takes are distributed -> score 0-1.0 -> 1.0 wrongly rejected real content.
+
+                                    # 0.0 admits his real (even diluted) spans, still abstains on negative scores.
+
+                                    # TODO(after v4): recalibrate on in- vs off-corpus probes — at 0.0 nearly
+
+                                    # everything grounds, so the abstain path only fires on zero/negative hits;
+
+                                    # v4's grounded rows teach span-handling, then a real threshold makes sense.
+
+  ollama_model: speaker-v5-a636       # final (2026-07-04): v5 arm-A step-636, user-picked winner
+
+  gen_temperature: 0.78
+
+  gen_top_p: 0.85
+
+  gen_repeat_penalty: 1.3
+
+  gen_num_predict: 256

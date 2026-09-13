@@ -1,0 +1,14 @@
+[
+  {
+    "id": "synthetic-01",
+    "type": "synthetic",
+    "prompt": "Bir belgesel hazırlarken kaynakları nasıl karşılaştırırsın?",
+    "reference_real": null
+  },
+  {
+    "id": "synthetic-02",
+    "type": "synthetic",
+    "prompt": "Bir iddiayı doğrulamadan paylaşmanın sakıncaları nelerdir?",
+    "reference_real": null
+  }
+]

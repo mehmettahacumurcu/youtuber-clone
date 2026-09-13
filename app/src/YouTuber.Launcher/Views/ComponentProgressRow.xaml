@@ -1,0 +1,26 @@
+<UserControl x:Class="YouTuber.Launcher.Views.ComponentProgressRow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.Name="{Binding AccessibleName}">
+  <Border Margin="0,0,0,12" Padding="12" BorderThickness="1" BorderBrush="#4A4A4A" CornerRadius="6">
+    <Grid KeyboardNavigation.TabNavigation="Local">
+      <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+        <TextBlock Margin="8,0,0,0" Text="{Binding Version, StringFormat=Version {0}}"/>
+      </StackPanel>
+      <TextBlock Grid.Column="1" Text="{Binding Status}" AutomationProperties.Name="Component status"/>
+      <TextBlock Grid.Row="1" Text="{Binding TransferredText}" AutomationProperties.Name="Downloaded bytes"/>
+      <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+        <TextBlock Text="{Binding SpeedText}"/><TextBlock Margin="8,0,0,0" Text="{Binding EtaText, StringFormat=ETA {0}}"/>
+      </StackPanel>
+      <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="0,6,0,0" Text="{Binding Error}" TextWrapping="Wrap" AutomationProperties.Name="Actionable component error"/>
+      <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="0,8,0,0" Orientation="Horizontal">
+        <Button Content="Pause" Command="{Binding PauseCommand}" TabIndex="0" AutomationProperties.Name="Pause this component"/>
+        <Button Margin="8,0,0,0" Content="Resume" Command="{Binding ResumeCommand}" TabIndex="1" AutomationProperties.Name="Resume this component"/>
+        <Button Margin="8,0,0,0" Content="Retry" Command="{Binding RetryCommand}" TabIndex="2" AutomationProperties.Name="Retry this component"/>
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>

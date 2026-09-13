@@ -1,0 +1,60 @@
+{
+  "schema": "youtuber.distribution.v1",
+  "release": "1.0.0",
+  "minimum": { "windows": "10.0.19045", "vram_bytes": 1, "ram_bytes": 1, "disk_bytes": 1, "runtime_api": 1 },
+  "ollama": {
+    "installer": {
+      "repo": "owner/ollama", "revision": "1111111111111111111111111111111111111111",
+      "path": "windows/ollama-installer.exe", "size": 1,
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "publisher": "Ollama, Inc.", "install_size": 2
+    },
+    "release_version": "1.0.0", "release_identity": "ollama-1.0.0",
+    "models": {
+      "verifier": {
+        "name": "qwen3:latest",
+        "source": {
+          "repo": "owner/models", "revision": "2222222222222222222222222222222222222222",
+          "path": "qwen3/model.gguf", "size": 3,
+          "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+        },
+        "installed_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "installed_size": 4
+      },
+      "speaker": {
+        "name": "speaker-v5-a636",
+        "gguf": {
+          "repo": "owner/models", "revision": "2222222222222222222222222222222222222222",
+          "path": "speaker/model.gguf", "size": 1,
+          "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "modelfile": {
+          "repo": "owner/models", "revision": "2222222222222222222222222222222222222222",
+          "path": "speaker/Modelfile", "size": 1,
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        },
+        "installed_size": 5
+      }
+    }
+  },
+  "webview2": {
+    "installer": {
+      "repo": "owner/webview2", "revision": "3333333333333333333333333333333333333333",
+      "path": "windows/MicrosoftEdgeWebView2RuntimeInstallerX64.exe", "size": 1,
+      "sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+      "publisher": "Microsoft Corporation", "install_size": 6
+    }
+  },
+  "components": {
+    "voice_runtime": {
+      "repo": "your-account/youtuber-runtime", "revision": "1111111111111111111111111111111111111111",
+      "path": "windows/voice-worker.zip", "size": 1,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "manifest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "package_type": "runtime_archive", "install_root": "runtime", "archive_root": "voice-runtime",
+      "expanded_size": 2, "install_size": 1, "peak_space": 1, "entrypoint": "voice-worker.exe",
+      "healthcheck": ["--healthcheck"], "compatibility": { "runtime_api": 1 },
+      "licenses": ["THIRD_PARTY_NOTICES.txt"]
+    }
+  }
+}

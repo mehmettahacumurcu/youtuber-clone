@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>YouTuberStudio</AssemblyName>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>false</PublishSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UsingDevelopmentBootstrapCatalog Condition="'$(BootstrapCatalogPath)' == ''">true</UsingDevelopmentBootstrapCatalog>
+    <BootstrapCatalogPath Condition="'$(BootstrapCatalogPath)' == ''">$(MSBuildProjectDirectory)\Resources\bootstrap-catalog.json</BootstrapCatalogPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(BootstrapCatalogPath)" LogicalName="YouTuber.Launcher.Resources.bootstrap-catalog.json" />
+  </ItemGroup>
+  <Target Name="RequireReleaseBootstrapCatalog" BeforeTargets="Publish">
+    <Error Condition="'$(FixtureHarness)' == 'true' and '$(FixtureMode)' != 'true'" Text="Fixture harness may only be compiled by an explicit fixture build." />
+    <Error Condition="'$(FixtureMode)' == 'true' and '$(FixtureHarness)' != 'true'" Text="FixtureMode requires FixtureHarness=true." />
+    <Error Condition="'$(UsingDevelopmentBootstrapCatalog)' == 'true'" Text="Production publishing requires a generated BootstrapCatalogPath; the development bootstrap catalog cannot be embedded." />
+    <Exec Command="powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command &quot;$catalog = Get-Content -LiteralPath &apos;$(BootstrapCatalogPath)&apos; -Raw | ConvertFrom-Json; if ($catalog.environment -eq &apos;development&apos;) { throw &apos;Production publishing cannot embed a development bootstrap catalog.&apos; }&quot;" />
+  </Target>
+  <PropertyGroup Condition="'$(FixtureMode)' == 'true'"><DefineConstants>$(DefineConstants);FIXTURE_BUILD</DefineConstants></PropertyGroup>
+</Project>

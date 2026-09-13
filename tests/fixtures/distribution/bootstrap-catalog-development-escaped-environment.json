@@ -1,0 +1,6 @@
+{
+  "schema": "youtuber.bootstrap-catalog.v1",
+  "\u0065nvironment": "development",
+  "manifest_url": "https://127.0.0.1/manifest.json",
+  "manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

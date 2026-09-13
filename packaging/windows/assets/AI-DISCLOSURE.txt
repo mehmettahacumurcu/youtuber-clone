@@ -1,0 +1,13 @@
+AI-GENERATED PERSONA AND VOICE DISCLOSURE
+
+YouTuber Studio is a research and fan-development system that generates text
+and audio with machine-learning models adapted from a real public creator's
+published material. The creator has granted permission for this project.
+
+Outputs are synthetic. They are not new genuine statements, opinions,
+endorsements, or recordings by the target speaker. Knowledge-grounded answers
+may summarize retrieved transcript evidence; an "answer anyway" mode can also
+generate material without supporting evidence. Users must keep this disclosure
+visible in public demonstrations, must not use the software for deception,
+fraud, harassment, political persuasion, or impersonation, and must follow all
+applicable voice, publicity, copyright, privacy, and deepfake laws.

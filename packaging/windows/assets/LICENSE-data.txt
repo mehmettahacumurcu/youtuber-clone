@@ -1,0 +1,14 @@
+YOUTUBER STUDIO DATA AND ARTIFACT NOTICE
+
+Curated project-owned data and derivative artifacts are intended for
+non-commercial research and demonstration use under CC BY-NC 4.0 only where
+the accompanying publication manifest explicitly assigns that license and the
+recorded permission covers the file. Canonical terms:
+
+    https://creativecommons.org/licenses/by-nc/4.0/legalcode
+
+Upstream transcripts, model weights, tokenizers, TTS files, and other bundled
+or downloaded materials retain their original licenses and restrictions. This
+notice does not grant rights that the project does not own. The target speaker
+has authorized this project, but generated outputs must still be disclosed as
+synthetic and must not be represented as genuine statements or endorsements.

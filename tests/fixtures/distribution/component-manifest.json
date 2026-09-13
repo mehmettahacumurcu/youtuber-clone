@@ -1,0 +1,11 @@
+{
+  "schema": "youtuber.component.v1",
+  "component": "voice_runtime",
+  "version": "1.0.0",
+  "compatibility": {"runtime_api": 1},
+  "entrypoint": "voice-worker.exe",
+  "healthcheck": ["--healthcheck"],
+  "files": [
+    {"path": "voice-worker.exe", "size": 1, "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+  ]
+}

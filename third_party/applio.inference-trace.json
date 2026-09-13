@@ -1,0 +1,90 @@
+{
+  "schema": "youtuber.applio.inference-trace.v1",
+  "repository": "https://github.com/IAHispano/Applio.git",
+  "commit": "3e5e248c2bd003f65f3e128dd12677533def27be",
+  "conversion": {
+    "input": "synthetic/sine-16000.wav",
+    "output": "synthetic/converted.wav",
+    "device": "cpu",
+    "sample_rate": 32000,
+    "channels": 1,
+    "frames": 63360,
+    "nonempty": true
+  },
+  "audit": {
+    "method": [
+      "sys.addaudithook(open)",
+      "sys.addaudithook(import)",
+      "sys.modules module origins",
+      "faiss.read_index wrapper"
+    ],
+    "applio_modules_imported": [
+      "rvc",
+      "rvc.configs",
+      "rvc.configs.config",
+      "rvc.infer",
+      "rvc.infer.infer",
+      "rvc.infer.pipeline",
+      "rvc.lib",
+      "rvc.lib.algorithm",
+      "rvc.lib.algorithm.attentions",
+      "rvc.lib.algorithm.commons",
+      "rvc.lib.algorithm.encoders",
+      "rvc.lib.algorithm.generators",
+      "rvc.lib.algorithm.generators.hifigan",
+      "rvc.lib.algorithm.generators.hifigan_mrf",
+      "rvc.lib.algorithm.generators.hifigan_nsf",
+      "rvc.lib.algorithm.generators.refinegan",
+      "rvc.lib.algorithm.modules",
+      "rvc.lib.algorithm.normalization",
+      "rvc.lib.algorithm.residuals",
+      "rvc.lib.algorithm.synthesizers",
+      "rvc.lib.predictors",
+      "rvc.lib.predictors.RMVPE",
+      "rvc.lib.predictors.f0",
+      "rvc.lib.tools",
+      "rvc.lib.tools.split_audio",
+      "rvc.lib.utils"
+    ],
+    "applio_source_or_config_opened": [
+      "rvc/configs/24000.json",
+      "rvc/configs/32000.json",
+      "rvc/configs/40000.json",
+      "rvc/configs/48000.json",
+      "rvc/infer/infer.py",
+      "rvc/lib/algorithm/commons.py",
+      "rvc/lib/utils.py"
+    ],
+    "applio_module_origins_seen": [
+      "vendor/rvc/configs/config.py",
+      "vendor/rvc/infer/infer.py",
+      "vendor/rvc/infer/pipeline.py",
+      "vendor/rvc/lib/algorithm/attentions.py",
+      "vendor/rvc/lib/algorithm/commons.py",
+      "vendor/rvc/lib/algorithm/encoders.py",
+      "vendor/rvc/lib/algorithm/generators/hifigan.py",
+      "vendor/rvc/lib/algorithm/generators/hifigan_mrf.py",
+      "vendor/rvc/lib/algorithm/generators/hifigan_nsf.py",
+      "vendor/rvc/lib/algorithm/generators/refinegan.py",
+      "vendor/rvc/lib/algorithm/modules.py",
+      "vendor/rvc/lib/algorithm/normalization.py",
+      "vendor/rvc/lib/algorithm/residuals.py",
+      "vendor/rvc/lib/algorithm/synthesizers.py",
+      "vendor/rvc/lib/predictors/RMVPE.py",
+      "vendor/rvc/lib/predictors/f0.py",
+      "vendor/rvc/lib/tools/split_audio.py",
+      "vendor/rvc/lib/utils.py"
+    ],
+    "voice_artifact_paths_opened": [
+      "voice-artifact/speaker_rvc_full_v1_200e_15800s.pth",
+      "voice-artifact/rvc/models/embedders/contentvec/config.json",
+      "voice-artifact/rvc/models/embedders/contentvec/pytorch_model.bin",
+      "voice-artifact/rvc/models/predictors/rmvpe.pt"
+    ],
+    "native_index_paths_used": [
+      "voice-artifact/speaker_rvc_full_v1.index"
+    ],
+    "pretrained_paths_opened": [],
+    "undeclared_applio_source_or_config_opened": []
+  }
+}

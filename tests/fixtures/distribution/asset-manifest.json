@@ -1,0 +1,12 @@
+{
+  "schema": "youtuber.asset.v1",
+  "component": "rag",
+  "version": "1.0.0",
+  "files": [
+    {
+      "path": "index/corpus.txt",
+      "size": 15,
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ]
+}

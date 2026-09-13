@@ -1,0 +1,6 @@
+{
+  "schema": "youtuber.bootstrap-catalog.v1",
+  "environment": "production",
+  "manifest_url": "https://huggingface.co/your-account/youtuber-studio-assets/resolve/1111111111111111111111111111111111111111/distribution-manifest.json",
+  "manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

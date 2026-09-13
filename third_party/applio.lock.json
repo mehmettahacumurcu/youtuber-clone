@@ -1,0 +1,106 @@
+{
+  "schema": "youtuber.applio.vendor.v1",
+  "repository": "https://github.com/IAHispano/Applio.git",
+  "commit": "3e5e248c2bd003f65f3e128dd12677533def27be",
+  "files": {
+    "rvc/configs/24000.json": {
+      "size": 1003,
+      "sha256": "ad860bdefa0235b3d2523dd0be8db8ad936e9792fd9f5ef414443b91d78c12a2"
+    },
+    "rvc/configs/32000.json": {
+      "size": 1004,
+      "sha256": "505d742040ebd82cfc3735654c375c2af49e57da38649a48e816f0f04a7033af"
+    },
+    "rvc/configs/40000.json": {
+      "size": 1006,
+      "sha256": "b8c1e217d6ae8bba95fb41bdaf796a453769eb1c0ba1e40c093e322246ea1b77"
+    },
+    "rvc/configs/48000.json": {
+      "size": 1006,
+      "sha256": "1e18a2ce2567f8a60e12b8c7a9c5cc8515f9ec7ec2dd3f19fffee3e6af1ba1bc"
+    },
+    "rvc/configs/config.py": {
+      "size": 3069,
+      "sha256": "f21962c7b45d51acd3ccd45c5b98a158a478178e062af286b0e1b3d22271d499"
+    },
+    "rvc/infer/infer.py": {
+      "size": 18420,
+      "sha256": "e12dd7c5d80fc76de4e1e4a93faad2548614a2eeb9a185e907e34e8a47a57753"
+    },
+    "rvc/infer/pipeline.py": {
+      "size": 20456,
+      "sha256": "e2c395991ee7afc1bccf50e1f3cd84673c84352097c31140a0f2dc1f9f97582c"
+    },
+    "rvc/lib/algorithm/attentions.py": {
+      "size": 9738,
+      "sha256": "ae000916e1167b318eb826903e320c5f7954d50a5fc6f7114a595fc3fb2ad3d5"
+    },
+    "rvc/lib/algorithm/commons.py": {
+      "size": 4008,
+      "sha256": "6c46bcaa281eda218f1138beb5dc0704b2f4890d7f9033f2f6ecb8c425b6a1e9"
+    },
+    "rvc/lib/algorithm/encoders.py": {
+      "size": 7188,
+      "sha256": "3f5fddd682166d6257c04b3bec94acd1bd0a81c78ae8e8803d62b9150a7546b8"
+    },
+    "rvc/lib/algorithm/generators/hifigan.py": {
+      "size": 9190,
+      "sha256": "69cb9d1f758abc7e68b5e13db80ef8d6113fbd3956f0449bbee1b06183586504"
+    },
+    "rvc/lib/algorithm/generators/hifigan_mrf.py": {
+      "size": 13981,
+      "sha256": "ad18870a4d4cdb11574d41908b118d75961256533575d27cfec6b668122c7a82"
+    },
+    "rvc/lib/algorithm/generators/hifigan_nsf.py": {
+      "size": 9283,
+      "sha256": "a7853908f64c4f928e61255e950f748f3551c50433be70dc7602587a1808cb07"
+    },
+    "rvc/lib/algorithm/generators/refinegan.py": {
+      "size": 15708,
+      "sha256": "5beeb49cc462d7d5b5423bffff3f8512cb008743846b9ed227cd95d3fcba4703"
+    },
+    "rvc/lib/algorithm/modules.py": {
+      "size": 4286,
+      "sha256": "0c4258eda66d40b810a2b6319f6ea34e0512e6363b8730d28dd7f718ef7dbd78"
+    },
+    "rvc/lib/algorithm/normalization.py": {
+      "size": 843,
+      "sha256": "0f076772bb69c65907928d671d0f5fe56c8a98e7df3fb1a0cd73fa61a392571a"
+    },
+    "rvc/lib/algorithm/residuals.py": {
+      "size": 8943,
+      "sha256": "d5ec8f61440bc640e6d25dc04f81c0f54bbd5348aba6520cc192f377a41820a6"
+    },
+    "rvc/lib/algorithm/synthesizers.py": {
+      "size": 9567,
+      "sha256": "79447e987f624aa78f12f707a97ce2ac36b25da623a7e807a4b3518009c225c9"
+    },
+    "rvc/lib/predictors/RMVPE.py": {
+      "size": 19402,
+      "sha256": "9f2886c516bdf10ce639fbf8d6c1f3fe20ef455fc2a97203ad85863d40dee30e"
+    },
+    "rvc/lib/predictors/f0.py": {
+      "size": 2556,
+      "sha256": "3248bc63bdc31f734bad0341180b7b87888a1157e5f7ebc444171fa66c198735"
+    },
+    "rvc/lib/tools/split_audio.py": {
+      "size": 3186,
+      "sha256": "d735e387867a9fa4b994d2fde81e6dd1657896b947158b0c91e4640520ec5b9a"
+    },
+    "rvc/lib/utils.py": {
+      "size": 6671,
+      "sha256": "c374d066e2bc30feee24b95fc6a03c321a77121d92d5d40541bde247ae69273c"
+    }
+  },
+  "auxiliary_assets": {
+    "rvc/models/embedders/contentvec/config.json": {
+      "supplied_by": "voice_artifact"
+    },
+    "rvc/models/embedders/contentvec/pytorch_model.bin": {
+      "supplied_by": "voice_artifact"
+    },
+    "rvc/models/predictors/rmvpe.pt": {
+      "supplied_by": "voice_artifact"
+    }
+  }
+}

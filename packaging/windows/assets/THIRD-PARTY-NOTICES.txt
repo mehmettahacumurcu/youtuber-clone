@@ -1,0 +1,16 @@
+THIRD-PARTY NOTICES
+
+This launcher uses Microsoft .NET and Microsoft Edge WebView2 under their
+respective Microsoft license terms. The installer is built with Inno Setup by
+Jordan Russell and Martijn Laan under the Inno Setup license.
+
+Downloadable components are not embedded in this installer. Depending on the
+selected release manifest, the application may acquire Ollama, Qwen-family
+models, BAAI embedding/reranking models, Coqui XTTS files, and Applio/RVC code
+or weights. Each remains governed by its upstream license and model card.
+Coqui XTTS assets may be subject to the Coqui Public Model License and related
+commercial-use restrictions. Applio/RVC code notices do not automatically
+license project-trained voice weights. The signed distribution manifest and
+component packages must carry the exact notices applicable to each version.
+
+Nothing in the YouTuber Studio license overrides upstream obligations.
